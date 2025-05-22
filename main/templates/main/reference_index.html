@@ -1,0 +1,14 @@
+{% load static %}
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <title>{% block title %}文献管理{% endblock %}</title>
+  <link href="{% static 'css/output.css' %}" rel="stylesheet">
+</head>
+<body class="bg-gray-100">
+  <div class="container mx-auto p-6">
+    {% block content %}{% endblock %}
+  </div>
+</body>
+</html>

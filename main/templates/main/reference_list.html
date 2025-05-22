@@ -1,0 +1,117 @@
+{% extends "base/base.html" %}
+{% block title %}一覧{% endblock %}
+
+{% block content %}
+
+<!-- 🔍 検索フォーム -->
+<form method="get" class="mb-6 flex flex-wrap gap-2 items-center">
+  <input type="text" name="q" value="{{ q }}" placeholder="キーワード（タイトル・著者）"
+         class="border px-3 py-2 rounded w-64" />
+
+  <select name="category" class="border px-3 py-2 rounded">
+    <option value="">カテゴリ</option>
+    {% for c in categories %}
+      <option value="{{ c.id }}" {% if c.id|stringformat:"s" == selected_category %}selected{% endif %}>
+        {{ c.name }}
+      </option>
+    {% endfor %}
+  </select>
+
+  <select name="tag" class="border px-3 py-2 rounded">
+    <option value="">タグ</option>
+    {% for t in tags %}
+      <option value="{{ t.id }}" {% if t.id|stringformat:"s" == selected_tag %}selected{% endif %}>
+        {{ t.name }}
+      </option>
+    {% endfor %}
+  </select>
+
+  <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+    検索
+  </button>
+
+  {% if q or selected_category or selected_tag %}
+  <a href="{% url 'main:list' %}" class="text-sm text-gray-600 underline ml-4">リセット</a>
+  {% endif %}
+</form>
+
+<!-- ➕ 新規作成 -->
+<a href="{% url 'main:create' %}"
+   class="mb-4 inline-block bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg">
+  ＋ 新規登録
+</a>
+
+<!-- 📋 一覧テーブル -->
+<table class="min-w-full bg-white shadow rounded-lg overflow-hidden">
+  <thead class="bg-gray-50 text-left text-sm font-semibold text-gray-600">
+    <tr>
+      <th class="p-3">タイトル</th>
+      <th class="p-3">著者</th>
+      <th class="p-3">年</th>
+      <th class="p-3">進捗状況</th>
+
+      <th class="p-3">カテゴリ</th>
+      <th class="p-3">タグ</th>
+      <th class="p-3"></th>
+    </tr>
+  </thead>
+  <tbody class="divide-y">
+    {% for ref in references %}
+    <tr class="hover:bg-gray-50">
+      <td class="p-3">
+        {% if ref.pdf %}
+          <a href="{% url 'main:reference_pdf' ref.pk %}" class="text-blue-600 hover:underline">
+            {{ ref.title }}
+          </a>
+        {% else %}
+          {{ ref.title }}
+        {% endif %}
+      </td>
+      <td class="p-3">{{ ref.authors }}</td>
+      <td class="p-3">{{ ref.year }}</td>
+      <!-- ✅ 進捗状況編集フォーム -->
+      <td class="p-3">
+        <form method="POST" action="{% url 'main:update_progress' ref.pk %}">
+          {% csrf_token %}
+          <select name="progress" onchange="this.form.submit()"
+                  class="border pr-8 pl-2 py-1 rounded text-sm font-semibold
+                  {% if ref.progress == 'not_started' %} bg-red-100 text-red-700
+                  {% elif ref.progress == 'in_progress' %} bg-yellow-100 text-yellow-700
+                  {% elif ref.progress == 'done' %} bg-green-100 text-green-700
+                  {% endif %}">
+            <option value="not_started" {% if ref.progress == "not_started" %}selected{% endif %}>未読</option>
+            <option value="in_progress" {% if ref.progress == "in_progress" %}selected{% endif %}>途中</option>
+            <option value="done" {% if ref.progress == "done" %}selected{% endif %}>読了</option>
+          </select>
+        </form>
+      </td>
+      <td class="p-3">
+        {% if ref.category %}
+          {{ ref.category.name }}
+        {% else %}
+          -
+        {% endif %}
+      </td>      <td class="p-3">
+        {% for tag in ref.tags.all %}
+          <span class="inline-block bg-slate-100 text-xs text-gray-700 px-2 py-1 rounded mr-1">
+            {{ tag.name }}
+          </span>
+        {% empty %}
+          -
+        {% endfor %}
+      </td>
+
+      <td class="p-3 text-right space-x-2">
+        <a href="{% url 'main:update' ref.pk %}" class="text-blue-600 hover:underline">編集</a>
+        <a href="{% url 'main:delete' ref.pk %}" class="text-red-600 hover:underline">削除</a>
+      </td>
+    </tr>
+    {% empty %}
+    <tr>
+      <td colspan="6" class="p-4 text-center text-gray-500">まだ登録がありません</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+{% endblock %}

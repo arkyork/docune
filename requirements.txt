@@ -1,0 +1,5 @@
+Django==5.2.1
+django-tailwind==3.8.*
+Markdown==3.8
+pdfminer_six==20250506
+sentence_transformers==4.1.0

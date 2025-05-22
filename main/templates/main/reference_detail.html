@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block content %}
+<h1 class="text-2xl font-bold">{{ ref.title }}</h1>
+
+<p><strong>著者:</strong> {{ ref.authors }}</p>
+<p><strong>出版年:</strong> {{ ref.year }}</p>
+<p><a href="{% url 'main:reference_pdf' ref.pk %}" class="text-blue-600">📄 PDFを見る</a></p>
+
+<h2 class="mt-6 text-xl font-semibold">📝 メモ</h2>
+<div class="prose max-w-full">
+  {{ memo_html|safe }}
+</div>
+{% endblock %}

@@ -1,0 +1,11 @@
+{% extends "base/base.html" %}
+{% block content %}
+<form method="post" enctype="multipart/form-data" class="max-w-xl mx-auto bg-white p-6 shadow rounded-lg">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <div class="mt-6 flex justify-end space-x-3">
+    <a href="{% url 'main:list' %}" class="px-4 py-2 rounded border">キャンセル</a>
+    <button type="submit" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded">保存</button>
+  </div>
+</form>
+{% endblock %}

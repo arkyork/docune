@@ -1,0 +1,85 @@
+{% extends "base/base_memo.html" %}
+{% load static %}
+
+{% block title %}{{ ref.title }} {% endblock %}
+
+{% block content %}
+<h1 class="text-xl font-bold mb-4">{{ ref.title }} </h1>
+
+<!-- 全体をまとめて x-data にする -->
+<div x-data="{ showMemo: true, editing: false }">
+
+<!-- ボタン群 -->
+<div class="flex gap-2 mb-4">
+    <button @click="showMemo = !showMemo"
+            class="bg-slate-600 text-white px-3  rounded">
+    <span x-text="showMemo ? '📝 メモを隠す' : '📝 メモを表示'"></span>
+    </button>
+      <template x-if="showMemo">
+      <button @click="editing = !editing"
+              class="bg-blue-600 text-white px-3  rounded">
+          <span x-text="editing ? '表示に戻す' : '✏️ メモを編集'"></span>
+      </button>
+    </template>
+    <!-- 🔍 類似検索ボタン -->
+    <div class="">
+      <button id="similar-btn"
+              class="flex items-center gap-2 bg-indigo-600 text-white font-semibold px-5 py-2.5 rounded-2xl shadow-md transition duration-200 ease-in-out hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-offset-2">
+        <span>🔍</span>
+        <span>類似文献を探す</span>
+      </button>
+    </div>
+
+
+</div>
+
+<!-- 横並び：PDF と メモ -->
+<div class="flex gap-4 max-h-[90vh] overflow-hidden">
+    <!-- 左：PDF -->
+    <div 
+         class="w-full lg:w-2/3 border rounded overflow-auto max-h-[90vh] max-w-full">
+         <iframe src="{{ ref.pdf.url }}" class="w-full h-[90vh]"></iframe>
+        
+    </div>
+  
+    <!-- 右：メモ -->
+    <div x-show="showMemo"
+         class="w-full lg:w-1/3 border rounded bg-white shadow p-4 overflow-auto max-h-[90vh]">
+
+             <!-- 📄 類似文献表示エリア -->
+    <div id="similar-results" class="mt-4 hidden">
+      <h2 class="text-lg font-semibold mb-2">🔍 類似文献</h2>
+      <ul id="similar-list" class="list-disc pl-5 text-sm text-gray-800"></ul>
+    </div>
+      <h2 class="text-lg font-semibold mb-2">📝 メモ</h2>
+  
+      <!-- 編集モード -->
+      <form method="POST" x-show="editing" class="space-y-4">
+        {% csrf_token %}
+        <textarea name="memo"
+                  class="w-full h-64 border rounded p-2 font-mono resize-y"
+                  x-init="$el.focus()">{{ ref.memo }}</textarea>
+        <div class="flex justify-end">
+          <button type="submit"
+                  class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
+            💾 保存する
+          </button>
+        </div>
+      </form>
+  
+      <!-- 表示モード -->
+      <div x-show="!editing" class="prose max-w-none">
+        {{ memo_html|safe }}
+      </div>
+    </div>
+  </div>
+  
+
+
+
+
+  {% include 'base/pdf.html' %}
+
+
+
+{% endblock %}

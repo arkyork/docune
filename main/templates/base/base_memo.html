@@ -1,0 +1,29 @@
+{% load static %}
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <title>{% block title %}Docune{% endblock %}</title>
+  <link href="{% static 'css/dist/styles.css' %}" rel="stylesheet">
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+</head>
+<body class="min-h-screen bg-gray-50 text-gray-800 flex flex-col">
+
+  <header class="bg-white border-b shadow-sm">
+    <div class="container  mx-auto flex items-center justify-between px-6 py-4">
+      <a href="/" class="flex items-center gap-2 text-slate-800 hover:text-blue-600">
+        <h1 class="text-2xl font-bold tracking-tight">📚 Docune</h1>
+      </a>
+      <nav class="text-sm text-gray-500">
+        <!-- 将来的にナビ追加できる場所 -->
+      </nav>
+    </div>
+  </header>
+
+  <main class="flex-1 container mx-auto px-6 py-8">
+    {% block content %}{% endblock %}
+  </main>
+
+</body>
+</html>

@@ -1,0 +1,10 @@
+{% extends "base/base.html" %}
+{% block content %}
+<div class="max-w-md mx-auto bg-white p-6 shadow rounded-lg text-center">
+  <p class="mb-4">「{{ object }}」を削除しますか？</p>
+  <form method="post">{% csrf_token %}
+    <button class="px-4 py-2 bg-red-600 text-white rounded mr-3">削除</button>
+    <a href="{% url 'main:list' %}" class="px-4 py-2 border rounded">キャンセル</a>
+  </form>
+</div>
+{% endblock %}
