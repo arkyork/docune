@@ -1,33 +1,6 @@
 
 <!-- PDF.js 読み込み -->
-<script src="https://unpkg.com/pdfjs-dist@3/build/pdf.min.js"></script>
-<script>
-  pdfjsLib.GlobalWorkerOptions.workerSrc =
-    "https://unpkg.com/pdfjs-dist@3/build/pdf.worker.min.js";
 
-  const url = "{{ ref.pdf.url }}";
-  const container = document.getElementById("pdf-container");
-
-  pdfjsLib.getDocument(url).promise.then(pdf => {
-    for (let n = 1; n <= pdf.numPages; n++) {
-      pdf.getPage(n).then(page => {
-        const desiredWidth = container.clientWidth;
-        const unscaledViewport = page.getViewport({ scale: 1 });
-        const scale = desiredWidth / unscaledViewport.width;
-        const viewport = page.getViewport({ scale });
-
-        const canvas = document.createElement("canvas");
-        canvas.width = viewport.width;
-        canvas.height = viewport.height;
-        canvas.className = "mb-4 shadow w-full";
-        container.appendChild(canvas);
-
-        const ctx = canvas.getContext("2d");
-        page.render({ canvasContext: ctx, viewport });
-      });
-    }
-  });
-</script>
 
 <script>
   document.getElementById("similar-btn").addEventListener("click", async () => {

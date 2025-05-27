@@ -1,6 +1,7 @@
 from django.db import models
 import os
-# Create your models here.
+from django.core.exceptions import ValidationError  
+
 
 class Category(models.Model):
     name = models.CharField("カテゴリ名", max_length=100)
@@ -28,7 +29,6 @@ class Reference(models.Model):
     year       = models.PositiveIntegerField("出版年", blank=True, null=True)
     journal    = models.CharField("雑誌 / 会議名", max_length=200, blank=True)
     url        = models.URLField("URL", blank=True)
-    pdf        = models.FileField("PDF", upload_to="pdfs/", blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     memo       = models.TextField("メモ（Markdown）", blank=True)
 
@@ -40,6 +40,18 @@ class Reference(models.Model):
         default="not_started",
         blank=False,
     )
+
+    pdf = models.FileField(upload_to="pdfs/", blank=True, null=True)
+    pdf_url = models.URLField(blank=True, null=True)
+
+    # どちらかは必須にしたい場合
+
+    def clean(self):
+        if not self.pdf and not self.pdf_url:
+            raise ValidationError("PDFファイルまたは PDFのURL を指定してください。")
+        if self.pdf and self.pdf_url:
+            raise ValidationError("PDFファイルと PDFのURL は同時に指定できません。")
+
     def delete(self, *args, **kwargs):
         # PDFファイルが存在すれば削除
         if self.pdf and os.path.isfile(self.pdf.path):

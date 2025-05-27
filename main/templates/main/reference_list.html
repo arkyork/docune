@@ -59,7 +59,7 @@
     {% for ref in references %}
     <tr class="hover:bg-gray-50">
       <td class="p-3">
-        {% if ref.pdf %}
+        {% if ref.pdf or ref.pdf_url %}
           <a href="{% url 'main:reference_pdf' ref.pk %}" class="text-blue-600 hover:underline">
             {{ ref.title }}
           </a>
